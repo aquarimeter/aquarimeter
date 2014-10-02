@@ -1,4 +1,4 @@
 aquarimeter
 ===========
 
-Aquarium Monitor for Hunter College Fall 2014 Capstone Project
+The hardware control software lives in this repository.
