@@ -1,4 +1,4 @@
-aquarimeter
+﻿aquarimeter
 ===========
 
 The Fall 2014 Capstone project written by Robert O’Connor(@robbyoconnor), Mark Stein (@mystycs) and Sudish Itwaru (@SI37)
@@ -14,3 +14,6 @@ MCP3008 DOUT -> #23 (yellow)
 MCP3008 DIN -> #24 (blue)
 MCP3008 CS -> #25 (violet)
 MCP3008 DGND -> GND (black)
+
+connect ph sensor to ch0 on MCP3008
+connect pir sensor to ch1 on MCP3008
