@@ -151,7 +151,7 @@ while True:
             GPIO.output(A4, GPIO.LOW)
         elif cool==True and temp_f < ideal_temp:
             cool == False
-            #turn of cooling
+            #turn off cooling
             GPIO.output(A1, GPIO.LOW)
             GPIO.output(A2, GPIO.LOW)
             GPIO.output(A3, GPIO.LOW)
