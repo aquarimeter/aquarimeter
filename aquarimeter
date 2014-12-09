@@ -72,24 +72,24 @@ GPIO.setup(SPICLK, GPIO.OUT)
 GPIO.setup(SPICS, GPIO.OUT)
  
 #set up gpio pin for h bridge
-12EN = 2
-1A = 17
-2A = 27
-34EN = 3
-3A = 10
-4A = 9
+EN12 = 2
+A1 = 17
+A2 = 27
+EN34 = 3
+A3 = 10
+A4 = 9
 
 #set pins up for output for bridge
-GPIO.setup(12EN,GPIO.OUT)
-GPIO.setup(1A,GPIO.OUT)
-GPIO.setup(2A,GPIO.OUT)
-GPIO.setup(34EN,GPIO.OUT)
-GPIO.setup(3A,GPIO.OUT)
-GPIO.setup(4A,GPIO.OUT)
+GPIO.setup(EN12,GPIO.OUT)
+GPIO.setup(A1,GPIO.OUT)
+GPIO.setup(A2,GPIO.OUT)
+GPIO.setup(EN34,GPIO.OUT)
+GPIO.setup(A3,GPIO.OUT)
+GPIO.setup(A4,GPIO.OUT)
 
 #set up h bridge to turn on 
-GPIO.output(12EN, GPIO.HIGH)
-GPIO.output(34EN, GPIO.HIGH)
+GPIO.output(EN12, GPIO.HIGH)
+GPIO.output(EN34, GPIO.HIGH)
 #set up values
 ph_adc = 0;
 pir_adc = 1;
@@ -114,48 +114,48 @@ while True:
             with picamera.PiCamera() as camera:
                     camera.capture('/home/pi/Desktop/image.jpg')
             
-        else:
-            #do nothing
+        
 
         #read temp
         lines = read_temp_raw()
         while lines[0].strip()[-3:] != 'YES':
-        time.sleep(0.2)
-        lines = read_temp_raw()
+            time.sleep(0.2)
+            lines = read_temp_raw()
+            
         equals_pos = lines[1].find('t=')
         if equals_pos != -1:
-        temp_string = lines[1][equals_pos+2:]
-        temp_c = float(temp_string) / 1000.0
-        temp_f = temp_c * 9.0 / 5.0 + 32.0 
+            temp_string = lines[1][equals_pos+2:]
+            temp_c = float(temp_string) / 1000.0
+            temp_f = temp_c * 9.0 / 5.0 + 32.0
+            
         if temp_f < min_temp:
             heat = True
             #turn h bridge to heat
-            GPIO.output(1A, GPIO.HIGH)
-            GPIO.output(2A, GPIO.LOW)
-            GPIO.output(3A, GPIO.HIGH)
-            GPIO.output(4A, GPIO.LOW)
-        else if temp_f > max_temp:
+            GPIO.output(A1, GPIO.HIGH)
+            GPIO.output(A2, GPIO.LOW)
+            GPIO.output(A3, GPIO.HIGH)
+            GPIO.output(A4, GPIO.LOW)
+        elif temp_f > max_temp:
             cool = True
             #turn h bridge to cool
-            GPIO.output(1A, GPIO.LOW)
-            GPIO.output(2A, GPIO.HIGH)
-            GPIO.output(3A, GPIO.LOW)
-            GPIO.output(4A, GPIO.HIGH)
-        else if heat==True and temp_f > ideal_temp:
+            GPIO.output(A1, GPIO.LOW)
+            GPIO.output(A2, GPIO.HIGH)
+            GPIO.output(A3, GPIO.LOW)
+            GPIO.output(A4, GPIO.HIGH)
+        elif heat==True and temp_f > ideal_temp:
             heat == False
             #turn off heating
-            GPIO.output(1A, GPIO.LOW)
-            GPIO.output(2A, GPIO.LOW)
-            GPIO.output(3A, GPIO.LOW)
-            GPIO.output(3A, GPIO.LOW)
-        else if cool==True and temp_f < ideal_temp:
+            GPIO.output(A1, GPIO.LOW)
+            GPIO.output(A2, GPIO.LOW)
+            GPIO.output(A3, GPIO.LOW)
+            GPIO.output(A4, GPIO.LOW)
+        elif cool==True and temp_f < ideal_temp:
             cool == False
             #turn of cooling
-            GPIO.output(1A, GPIO.LOW)
-            GPIO.output(2A, GPIO.LOW)
-            GPIO.output(3A, GPIO.LOW)
-            GPIO.output(4A, GPIO.LOW)
-        else
-                #do nothing
+            GPIO.output(A1, GPIO.LOW)
+            GPIO.output(A2, GPIO.LOW)
+            GPIO.output(A3, GPIO.LOW)
+            GPIO.output(A4, GPIO.LOW)
+
         # hang out and do nothing for a half second
-        time.sleep(1)
+        time.sleep(.1)
