@@ -142,15 +142,15 @@ while True:
             GPIO.output(A2, GPIO.HIGH)
             GPIO.output(A3, GPIO.LOW)
             GPIO.output(A4, GPIO.HIGH)
-        elif heat==True and temp_f > ideal_temp:
-            heat == False
+        elif heat and temp_f > ideal_temp:
+            heat = False
             #turn off heating
             GPIO.output(A1, GPIO.LOW)
             GPIO.output(A2, GPIO.LOW)
             GPIO.output(A3, GPIO.LOW)
             GPIO.output(A4, GPIO.LOW)
-        elif cool==True and temp_f < ideal_temp:
-            cool == False
+        elif cool and temp_f < ideal_temp:
+            cool = False
             #turn off cooling
             GPIO.output(A1, GPIO.LOW)
             GPIO.output(A2, GPIO.LOW)
