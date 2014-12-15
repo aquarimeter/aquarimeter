@@ -18,20 +18,12 @@ MCP3008 DGND -> GND (black),
 connect ph sensor to ch0 on MCP3008
 connect pir sensor to ch1 on MCP3008
 
-SN754410 connection to raspberry pi:
-SN754410 1 -> #2, 
-SN754410 2 -> #17, 
-SN754410 3 -> peltio(red), 
-SN754410 4 -> GND, 
-SN754410 5 -> GND, 
-SN754410 6 -> peltio(black), 
-SN754410 7 -> #27, 
-SN754410 8 -> 5v, 
-SN754410 9 -> #3, 
-SN754410 10 -> #10, 
-SN754410 11 -> peltio(red), 
-SN754410 12 -> GND, 
-SN754410 13 -> GND, 
-SN754410 14 -> peltio(black), 
-SN754410 15 -> #9, 
-SN754410 16 -> 5v, 
+B1 - > #27
+B2 -> #17
+A1 -> #14
+A2 -> #15
+vin -> power supply
+gnd(same side as vin) - >gnd
+gnd(side as a1 a2 b1 b2) ->pi gnd
+
+ds18b20 (yellow) -> #4
