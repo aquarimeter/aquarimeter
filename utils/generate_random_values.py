@@ -1,10 +1,7 @@
 import random
-ph = [random.uniform(0, 14) for x in range(30000)]
-temp = [random.uniform(55, 90) for x in range(30000)]
-temp_file = open('temp.csv', 'w+')
-ph_file = open('ph.csv', 'w+')
+ph = [random.uniform(0, 14) for x in range(300000)]
+temp = [random.uniform(55, 90) for x in range(300000)]
+temp_file = open('/home/rob/aquarimeter-web/readings.csv', 'w+')
 for x in range(len(temp)):
-    temp_file.write(("%.2f," if x != len(temp)-1 else "%.2f") % temp[x])
-    ph_file.write(("%.2f," if x != len(ph)-1 else "%.2f") % ph[x])
-temp_file.close()
-ph_file.close()
+   temp_file.write("%.2f,%.2f\n" % (temp[x],ph[x]))
+temp_file.close()   
