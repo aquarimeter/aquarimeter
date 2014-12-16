@@ -22,8 +22,7 @@ aquarium. It can be at http://aquarium.oconnor.ninja/""").grid(row = 0,columnspa
         Label(self, text="E-mail").grid(row=5,sticky=E)
         Label(self, text="Password").grid(row=6,sticky=E)
         Label(self, text="First Name").grid(row=7,sticky=E)
-        Label(self, text="Last Name").grid(row=8,sticky=E)
-        Label(self, text="Ideal Temperature").grid(row=9,sticky=E)
+        Label(self, text="Last Name").grid(row=8,sticky=E)        
         Label(self, text="Min temeprature").grid(row=10,sticky=E)
         Label(self, text="Max temperature").grid(row=11,sticky=E)
         
@@ -38,8 +37,6 @@ aquarium. It can be at http://aquarium.oconnor.ninja/""").grid(row = 0,columnspa
         self.firstNm.grid(row=7, column=1) 
         self.lastNm = Entry(self)
         self.lastNm.grid(row=8, column=1)
-        self.idlTemp = Entry(self)
-        self.idlTemp.grid(row=9, column=1)
         self.minTemp= Entry(self)
         self.minTemp.grid(row=10, column=1)
         self.maxTemp = Entry(self)
