@@ -57,7 +57,7 @@ class Application(Frame):
             #pop up invalid message wait for it to enter again
             print "no good. need more chcracters for password or email"
         else:
-            #reister area
+            #register area json
             REGISTER = {"user":{"email":emailEnt,
                                 "password":passwrdEnt,
                                 "first_name":firstNmEnt,

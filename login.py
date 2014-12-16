@@ -50,6 +50,7 @@ class Application(Frame):
             #pop up invalid message wait for it to enter again
             print "no good"
         else:
+            #place where the json payload happens
             REGISTER = {"user":{"email":emailEnt,
                                 "password":passwrdEnt}}
             #url must be changed
