@@ -11,6 +11,11 @@ class Application(Frame):
         Frame.__init__(self,master)
         self.grid()
         self.create_widgets()
+    def messageBox(error):
+        msg = Message(top, text=error)
+        msg.pack()
+        button = Button(top, text="Dismiss", command=top.destroy)
+        button.pack()
 
     def create_widgets(self):
         Label(self, text = """Please enter all intial values as indicated.Your settings will be saved in
@@ -69,12 +74,10 @@ aquarium.""").grid(row = 0,column = 0, columnspan = 5,sticky = W)
            self.passwrd.get() == "" or self.lastNm.get() == "" or
            self.idlTemp.get() == "" or self.minTemp.get() == "" or
            self.maxTemp.get() == ""):
-            print "fill all required fields"
-            self.invalid
-        elif len(self.passwrd.get) < 10):
-            print "REPLACE WITH MESSAGE BOX!"            
+            messageBox("fill all required fields")
+            self.invalid            
         else:    
-        #get info from those field
+            #get info from those field
             self.register
             """emailEnt = self.email.get()
             firstNmEnt = self.firstNm.get()
@@ -112,33 +115,7 @@ aquarium.""").grid(row = 0,column = 0, columnspan = 5,sticky = W)
                 print "Validation errors have occured, check JSON for errors"
 
     def login():
-        #login and get username and auth_token
-        emailEnt = self.email.get()
-        passwrdEnt = self.passwrd.get()
-
-        
-        if(emailEnt == "" or passwrdEnt == ""):
-            #pop up invalid message wait for it to enter again
-            
-        else:
-            #place where the json payload happens
-            ########
-            LOGIN = {"user":{"email":emailEnt,
-                                "password":passwrdEnt}}
-            #url must be changed
-            URL = 'http://localhost:8880/form'
-
-            jsondata = simplejson.dumps(LOGIN)
-            h = httplib2.Http()
-            User, auth_token, aquariums = h.request(URL,
-                                      'POST',
-                                      jsondata,
-                                      headers={'Content-Type': 'application/json'})
-            #must place in aquarimteter program
-            TOKENS = 'auth_token.txt'
-            token_file = open(TOKENS,'w')
-            token_file.write("%s" % (auth_token) )
-            token_file.close()
+       """TODO: fix this to use TLS!""" 
 
 root = Tk()
 root.title("Aquarimeter Intial Setup")
@@ -146,10 +123,4 @@ root.title("Aquarimeter Intial Setup")
 app = Application(root)
 
 root.mainloop()
-
-def messageBox(error):
-    msg = Message(top, text=error)
-    msg.pack()
-    button = Button(top, text="Dismiss", command=top.destroy)
-    button.pack()
     
