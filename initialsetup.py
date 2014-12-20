@@ -71,6 +71,8 @@ aquarium.""").grid(row = 0,column = 0, columnspan = 5,sticky = W)
            self.maxTemp.get() == ""):
             print "fill all required fields"
             self.invalid
+        elif len(self.passwrd.get) < 10):
+            print "REPLACE WITH MESSAGE BOX!"            
         else:    
         #get info from those field
             self.register
@@ -117,7 +119,7 @@ aquarium.""").grid(row = 0,column = 0, columnspan = 5,sticky = W)
         
         if(emailEnt == "" or passwrdEnt == ""):
             #pop up invalid message wait for it to enter again
-            print "no good"
+            
         else:
             #place where the json payload happens
             ########
@@ -137,10 +139,6 @@ aquarium.""").grid(row = 0,column = 0, columnspan = 5,sticky = W)
             token_file = open(TOKENS,'w')
             token_file.write("%s" % (auth_token) )
             token_file.close()
-            
-    def invalid(self):
-        
-        print "invalid"
 
 root = Tk()
 root.title("Aquarimeter Intial Setup")
@@ -148,3 +146,10 @@ root.title("Aquarimeter Intial Setup")
 app = Application(root)
 
 root.mainloop()
+
+def messageBox(error):
+    msg = Message(top, text=error)
+    msg.pack()
+    button = Button(top, text="Dismiss", command=top.destroy)
+    button.pack()
+    
