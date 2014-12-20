@@ -15,7 +15,7 @@ class Application(Frame):
     def create_widgets(self):
         Label(self, text = """Please enter all intial values as indicated.Your settings will be saved in
 Aquarimeter Web, the web application which helps you view the status of your
-aquarium. It can be at http://aquarium.oconnor.ninja/""").grid(row = 0,column = 0, columnspan = 5,sticky = W)
+aquarium.""").grid(row = 0,column = 0, columnspan = 5,sticky = W)
 
         #create labels to display information needed
 
