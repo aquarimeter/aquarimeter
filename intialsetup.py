@@ -13,59 +13,75 @@ class Application(Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        Label(self, text = """Please enter all intial values as indicated. Your settings will be saved in
+        Label(self, text = """Please enter all intial values as indicated.Your settings will be saved in
 Aquarimeter Web, the web application which helps you view the status of your
-aquarium. It can be at http://aquarium.oconnor.ninja/""").grid(row = 0,columnspan = 40,sticky = W)
+aquarium. It can be at http://aquarium.oconnor.ninja/""").grid(row = 0,column = 0, columnspan = 5,sticky = W)
 
         #create labels to display information needed
-        Label(self, text="User").grid(row=4,sticky=E)
-        Label(self, text="E-mail").grid(row=5,sticky=E)
-        Label(self, text="Password").grid(row=6,sticky=E)
-        Label(self, text="First Name").grid(row=7,sticky=E)
-        Label(self, text="Last Name").grid(row=8,sticky=E)        
-        Label(self, text="Min temeprature").grid(row=10,sticky=E)
-        Label(self, text="Max temperature").grid(row=11,sticky=E)
+
+        self.regFrame = LabelFrame(self,text="Login Details for Aquarimeter Web", bd = 5)
+        self.regFrame.grid(row=4, column = 0, columnspan=3, rowspan=5, \
+                sticky='WENS', padx=5, pady=5)
+        Label(self.regFrame, text="E-mail").grid(row=6,sticky=E)
+        Label(self.regFrame, text="Password").grid(row=7,sticky=E)
+        Label(self.regFrame, text="First Name").grid(row=8,sticky=E)
+        Label(self.regFrame, text="Last Name").grid(row=9,sticky=E)
+        Label(self.regFrame, text=" ").grid(row=10,sticky=E)
+        
+        Label(self, text="Ideal Temperature").grid(row=11,sticky=E)
+        Label(self, text=" ").grid(row=12,sticky=E)
+        Label(self, text="Min temp").grid(row=13, sticky=E)
+        Label(self, text="Max temp").grid(row=14, sticky=E)
+        Label(self, text=" ").grid(row=15,sticky=E)
         
         #create places to enter text
-        self.user = Entry(self)
-        self.user.grid(row=4, column=1)
-        self.email = Entry(self)
-        self.email.grid(row=5, column=1)
-        self.passwrd = Entry(self)
-        self.passwrd.grid(row=6, column=1)
-        self.firstNm = Entry(self)
-        self.firstNm.grid(row=7, column=1) 
-        self.lastNm = Entry(self)
-        self.lastNm.grid(row=8, column=1)
-        self.minTemp= Entry(self)
-        self.minTemp.grid(row=10, column=1)
+        self.email = Entry(self.regFrame)
+        self.email.grid(row=6, column=1)
+        self.passwrd = Entry(self.regFrame)
+        self.passwrd.grid(row=7, column=1)
+        self.firstNm = Entry(self.regFrame)
+        self.firstNm.grid(row=8, column=1) 
+        self.lastNm = Entry(self.regFrame)
+        self.lastNm.grid(row=9, column=1)
+
+        
+        self.idlTemp = Entry(self)
+        self.idlTemp.grid(row=11, column=1)
+        DEGREES = ["C", "F"]
+        var = StringVar(self)
+        var.set(DEGREES[0])
+        self.DegMenu = apply(OptionMenu, (self,var) + tuple(DEGREES))
+        self.DegMenu.grid(row = 11, column = 2)
+
+        self.minTemp = Entry(self)
+        self.minTemp.grid(row=13, column=1)
         self.maxTemp = Entry(self)
-        self.maxTemp.grid(row=11, column=1)
+        self.maxTemp.grid(row=14, column=1)
 
         #create submit and cancel buttons
-        self.Submit = Button(self,text = "Register and save", command = self.connect).grid(row = 13,column = 27, sticky = E)
-        self.Cancel = Button(self,text = "Cancel", command = self.cancel).grid(row = 13, column = 9, sticky = E)
+        self.Submit = Button(self,text = "Register and save", command = self.connect).grid(row = 16,column = 3, sticky = E)
+        self.Cancel = Button(self,text = "Cancel", command = self.cancel).grid(row = 16, column = 2, sticky = E)
 
 
     def connect(self):
         """shows what was entered. needs to be adjusted to send these items"""
-        if(self.user.get() == "" or self.email.get() == "" or
-           self.firstNm.get() == "" or self.passwrd.get() == "" or
-           self.lastNm.get() == "" or self.idlTemp.get() == "" or
-           self.minTemp.get() == "" or self.maxTemp.get() == ""):
-            print "enter all fields"
+        if(self.email.get() == "" or self.firstNm.get() == "" or
+           self.passwrd.get() == "" or self.lastNm.get() == "" or
+           self.idlTemp.get() == "" or self.minTemp.get() == "" or
+           self.maxTemp.get() == ""):
+            print "fill all required fields"
             self.invalid
         else:    
         #get info from those field
             self.register
-            userEnt = self.user.get()
-            emailEnt = self.email.get()
+            """emailEnt = self.email.get()
             firstNmEnt = self.firstNm.get()
             passwrdEnt = self.passwrd.get()
             lastNmEnt = self.lastNm.get()
+            
             idlTempEnt = self.idlTemp.get()
             minTempEnt = self.minTemp.get()
-            maxTempEnt = self.maxTemp.get()
+            maxTempEnt = self.maxTemp.get()"""
 
             
     def cancel(self):
@@ -127,8 +143,7 @@ aquarium. It can be at http://aquarium.oconnor.ninja/""").grid(row = 0,columnspa
         print "invalid"
 
 root = Tk()
-root.title("intial setup")
-root.geometry("420x250")
+root.title("Aquarimeter Intial Setup")
 
 app = Application(root)
 
