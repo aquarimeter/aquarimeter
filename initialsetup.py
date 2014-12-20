@@ -11,9 +11,11 @@ class Application(Frame):
         Frame.__init__(self,master)
         self.grid()
         self.create_widgets()
-    def messageBox(error):
+    def messageBox(self,error):
+        top = Toplevel()
+        top.title("Error")
         msg = Message(top, text=error)
-        msg.pack()
+        messsage.pack()        
         button = Button(top, text="Dismiss", command=top.destroy)
         button.pack()
 
@@ -24,7 +26,7 @@ aquarium.""").grid(row = 0,column = 0, columnspan = 5,sticky = W)
 
         #create labels to display information needed
 
-        self.regFrame = LabelFrame(self,text="Login Details for Aquarimeter Web", bd = 5)
+        self.regFrame = LabelFrame(self,text="Registration and Login Details for Aquarimeter Web", bd = 5)
         self.regFrame.grid(row=4, column = 0, columnspan=3, rowspan=5, \
                 sticky='WENS', padx=5, pady=5)
         Label(self.regFrame, text="E-mail").grid(row=6,sticky=E)
@@ -74,8 +76,8 @@ aquarium.""").grid(row = 0,column = 0, columnspan = 5,sticky = W)
            self.passwrd.get() == "" or self.lastNm.get() == "" or
            self.idlTemp.get() == "" or self.minTemp.get() == "" or
            self.maxTemp.get() == ""):
-            messageBox("fill all required fields")
-            self.invalid            
+            self.messageBox("fill all required fields")
+                
         else:    
             #get info from those field
             self.register
