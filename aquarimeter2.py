@@ -16,7 +16,7 @@ base_dir = '/sys/bus/w1/devices/'
 device_folder = glob.glob(base_dir + '28*')[0]
 device_file = device_folder + '/w1_slave'
 
-class aqua():
+class aquarium(object):
     
     #for reading from DS18B20 temperature connected to GPIO4
     def read_temp_raw():
