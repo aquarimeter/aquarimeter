@@ -8,10 +8,10 @@ class Aquarium_Setup:
 
     #checks required fields is filled before registering
     def validate(self):
-        if(self.valid_Email.get_text() == "" or
-           self.valid_Password.get_text() == "" or
-           self.first_Name.get_text() == "" or
-           self.last_Name.get_text() == ""):
+        if(not self.valid_Email.get_text() or
+           not self.valid_Password.get_text() or
+           not self.first_Name.get_text() or
+           not self.last_Name.get_text()):
             return False
         else:
             return True
