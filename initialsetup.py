@@ -82,9 +82,10 @@ class Aquarium_Setup:
         
         if log.status_code == 200:
             auth_token = log[auth_token]
-            #then run aquarimeter sending auth_token to it
+            #then run aquarimeter sending auth_token to it along with
+            #ideal, min and max temp
         else:
-            print "username/password is incorrect"
+            print "email/password is incorrect"
             
 
     def check_register(self,widget):
