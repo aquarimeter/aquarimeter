@@ -1,150 +1,183 @@
-from Tkinter import *
-import httplib2
-from datetime import datetime
-import simplejson
+#!/usr/bin/env python
 
-class Application(Frame):
-    """gui for entering stuff """
+import pygtk
+pygtk.require('2.0')
+import gtk
 
-    def __init__(self,master):
-        """make frame"""
-        Frame.__init__(self,master)
-        self.grid()
-        self.create_widgets()
+class Aquarium_Setup:
 
-    def create_widgets(self):
-        Label(self, text = """Please enter all intial values as indicated.Your settings will be saved in
-Aquarimeter Web, the web application which helps you view the status of your
-aquarium.""").grid(row = 0,column = 0, columnspan = 5,sticky = W)
-
-        #create labels to display information needed
-
-        self.regFrame = LabelFrame(self,text="Login Details for Aquarimeter Web", bd = 5)
-        self.regFrame.grid(row=4, column = 0, columnspan=3, rowspan=5, \
-                sticky='WENS', padx=5, pady=5)
-        Label(self.regFrame, text="E-mail").grid(row=6,sticky=E)
-        Label(self.regFrame, text="Password").grid(row=7,sticky=E)
-        Label(self.regFrame, text="First Name").grid(row=8,sticky=E)
-        Label(self.regFrame, text="Last Name").grid(row=9,sticky=E)
-        Label(self.regFrame, text=" ").grid(row=10,sticky=E)
-        
-        Label(self, text="Ideal Temperature").grid(row=11,sticky=E)
-        Label(self, text=" ").grid(row=12,sticky=E)
-        Label(self, text="Min temp").grid(row=13, sticky=E)
-        Label(self, text="Max temp").grid(row=14, sticky=E)
-        Label(self, text=" ").grid(row=15,sticky=E)
-        
-        #create places to enter text
-        self.email = Entry(self.regFrame)
-        self.email.grid(row=6, column=1)
-        self.passwrd = Entry(self.regFrame)
-        self.passwrd.grid(row=7, column=1)
-        self.firstNm = Entry(self.regFrame)
-        self.firstNm.grid(row=8, column=1) 
-        self.lastNm = Entry(self.regFrame)
-        self.lastNm.grid(row=9, column=1)
-
-        
-        self.idlTemp = Entry(self)
-        self.idlTemp.grid(row=11, column=1)
-        DEGREES = ["C", "F"]
-        var = StringVar(self)
-        var.set(DEGREES[0])
-        self.DegMenu = apply(OptionMenu, (self,var) + tuple(DEGREES))
-        self.DegMenu.grid(row = 11, column = 2)
-
-        self.minTemp = Entry(self)
-        self.minTemp.grid(row=13, column=1)
-        self.maxTemp = Entry(self)
-        self.maxTemp.grid(row=14, column=1)
-
-        #create submit and cancel buttons
-        self.Submit = Button(self,text = "Register and save", command = self.connect).grid(row = 16,column = 3, sticky = E)
-        self.Cancel = Button(self,text = "Cancel", command = self.cancel).grid(row = 16, column = 2, sticky = E)
-
-
-    def connect(self):
-        """shows what was entered. needs to be adjusted to send these items"""
-        if(self.email.get() == "" or self.firstNm.get() == "" or
-           self.passwrd.get() == "" or self.lastNm.get() == "" or
-           self.idlTemp.get() == "" or self.minTemp.get() == "" or
-           self.maxTemp.get() == ""):
-            print "fill all required fields"
-            self.invalid
-        else:    
-        #get info from those field
-            self.register
-            """emailEnt = self.email.get()
-            firstNmEnt = self.firstNm.get()
-            passwrdEnt = self.passwrd.get()
-            lastNmEnt = self.lastNm.get()
-            
-            idlTempEnt = self.idlTemp.get()
-            minTempEnt = self.minTemp.get()
-            maxTempEnt = self.maxTemp.get()"""
-
-            
-    def cancel(self):
-        root.destroy()
-
-    def register(self):
-        #register area json
-        REGISTER = {"user":{"email":self.email.get(),
-                            "password":self.passwrd.get(),
-                            "first_name":self.firstNmget(),
-                            "last_name":self.lastNm.get()}}
-        #must change url
-        URL = 'http://localhost:8880/form'
-
-        jsondata = simplejson.dumps(REGISTER)
-        h = httplib2.Http()
-        HTTPcode = h.request(URL,
-                            'POST',
-                            jsondata,
-                            headers={'Content-Type': 'application/json'})
-        if(HTTPcode == 200):
-                print "everything is allright"
-                self.login
-
+    #checks required fields is filled before registering
+    def validate(self):
+        if(self.valid_Email.get_text() == "" or
+           self.valid_Password.get_text() == "" or
+           self.first_Name.get_text() == "" or
+           self.last_Name.get_text() == ""):
+            return False
         else:
-                print "Validation errors have occured, check JSON for errors"
+            return True
 
-    def login():
-        #login and get username and auth_token
-        emailEnt = self.email.get()
-        passwrdEnt = self.passwrd.get()
-
-        
-        if(emailEnt == "" or passwrdEnt == ""):
-            #pop up invalid message wait for it to enter again
-            print "no good"
+    #checks password is long enough
+    def check_length(self,password):
+        if(len(password) < 10):
+            return False
         else:
-            #place where the json payload happens
-            ########
-            LOGIN = {"user":{"email":emailEnt,
-                                "password":passwrdEnt}}
-            #url must be changed
-            URL = 'http://localhost:8880/form'
-
-            jsondata = simplejson.dumps(LOGIN)
-            h = httplib2.Http()
-            User, auth_token, aquariums = h.request(URL,
-                                      'POST',
-                                      jsondata,
-                                      headers={'Content-Type': 'application/json'})
-            #must place in aquarimteter program
-            TOKENS = 'auth_token.txt'
-            token_file = open(TOKENS,'w')
-            token_file.write("%s" % (auth_token) )
-            token_file.close()
-            
-    def invalid(self):
+            return True
         
-        print "invalid"
+    #pop up message box asking to fill all fields
+    def error_fill(self):
+        info = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK)
+        info.set_property('title', 'Missing information')
+        info.set_property('text', 'Please fill in all fields')
+        info.run()
+        info.destroy()
 
-root = Tk()
-root.title("Aquarimeter Intial Setup")
+    #pop up message for short password
+    def error_password(self):
+        info = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK)
+        info.set_property('title', 'Password too short')
+        info.set_property('text', 'Password must be at least 10 characters long')
+        info.run()
+        info.destroy()
+        
+    #registers with entered information from gui
+    def register(self,widget,data=None):
+        fill = self.validate()
+        long_pwd = self.check_length(self.valid_Password.get_text())
+        if(not fill):
+            self.error_fill()
+        elif(not long_pwd):
+            self.error_password()
+        else:
+            #json payload send should happen here. must be changed to do that
+            print self.valid_Email.get_text()
+            print self.valid_Password.get_text()
+            print self.first_Name.get_text()
+            print self.last_Name.get_text()
+            self.login()
 
-app = Application(root)
+    #login with password and email
+    def login(self):
+        #login  must happen here and must save auth_token. must be changec
+        print "will now login"
 
-root.mainloop()
+    
+    #main gui window
+    def __init__(self):
+        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        self.window.set_title("Aquarimeter Intial Setup")
+        self.window.connect("destroy", lambda wid: gtk.main_quit())
+        
+        main_Box = gtk.VBox(False, 5) #all items will be arranged vertically in here
+        self.window.add(main_Box)
+        self.window.set_border_width(10)
+
+        label = gtk.Label("Please enter all intial values as indicated. Your"
+                          "settings will be saved in\n Aquarimeter Web, the"
+                          " web application which helps you view the status "
+                          "of your\n aquarium. It can be at http://aquarium."
+                          "oconnor.ninja/")
+        main_Box.pack_start(label)
+        #create fields for registeration information to be entered
+        reg_frame = gtk.Frame("Login Details for Aquarimeter Web") 
+
+        #labels for information needed
+        info_Box = gtk.HBox(False,5)
+        vbox1 = gtk.VBox(False,5)
+        info_Box.add(vbox1)
+
+        label = gtk.Label("E-mail")
+        vbox1.add(label)
+        label = gtk.Label("Password")
+        vbox1.add(label)
+        label = gtk.Label("First Name")
+        vbox1.add(label)
+        label = gtk.Label("Last Name")
+        vbox1.add(label)
+
+        #fields to enter information
+        vbox2 = gtk.VBox(False,5)
+        info_Box.add(vbox2)
+        
+        self.valid_Email = gtk.Entry()
+        vbox2.add(self.valid_Email)
+        
+        self.valid_Password = gtk.Entry()
+        vbox2.add(self.valid_Password)
+        
+        self.first_Name = gtk.Entry()
+        vbox2.add(self.first_Name)
+        
+        self.last_Name = gtk.Entry()
+        vbox2.add(self.last_Name)
+        
+        reg_frame.add(info_Box)
+        main_Box.pack_start(reg_frame, False, False, 0)
+
+        #labels for varias temperature settings
+        temp_frame = gtk.Frame("Temperature set")
+        vbox3 = gtk.VBox(False,5)
+        hbox3 = gtk.HBox(False,5)
+        hbox3.add(vbox3)
+        
+        label = gtk.Label("Intial Temperature")
+        vbox3.add(label)
+        label = gtk.Label("Max Temperature")
+        vbox3.add(label)
+        label = gtk.Label("Min Temperature")
+        vbox3.add(label)
+
+        #temperature selection setting
+        vbox4 = gtk.VBox(False,5)
+        hbox3.add(vbox4)
+
+        adj = gtk.Adjustment(70.0, 55.0, 85.0, 1.0, 5.0, 0.0)
+        spinner = gtk.SpinButton(adj, 0, 0)
+        vbox4.add(spinner)
+        
+        adj = gtk.Adjustment(70.0, 55.0, 85.0, 1.0, 5.0, 0.0)
+        spinner2 = gtk.SpinButton(adj, 0, 0)
+        vbox4.add(spinner2)
+        
+        adj = gtk.Adjustment(70.0, 55.0, 85.0, 1.0, 5.0, 0.0)
+        spinner3 = gtk.SpinButton(adj, 0, 0)
+        vbox4.add(spinner3)
+
+        #temperature units setting
+        vbox5 = gtk.VBox(False,5)
+        hbox3.add(vbox5)
+
+        combo = gtk.Combo()
+        combo.entry.set_text("list")
+        slist = [ "F", "C" ]
+        combo.set_popdown_strings(slist)
+        vbox5.add(combo)
+        label = gtk.Label(" ")
+        vbox5.add(label)
+        label = gtk.Label(" ")
+        vbox5.add(label)
+        
+        temp_frame.add(hbox3)
+        main_Box.pack_start(temp_frame, False, False, 0)
+
+        #cancel and submit button section
+        hbox10 = gtk.HBox(False,2)
+        main_Box.pack_start(hbox10, False,False,0)
+        
+        button = gtk.Button("Submit and Register")
+        button.connect("clicked", self.register)
+        hbox10.pack_end(button,False,False,2)
+        
+        button = gtk.Button("cancel")
+        button.connect_object("clicked",gtk.Widget.destroy, self.window)
+        hbox10.pack_end(button,False,False,2)
+
+        self.window.show_all()
+
+    def main(self):
+        gtk.main()
+
+
+if __name__ == "__main__":
+    Aqua_Setup = Aquarium_Setup()
+    Aqua_Setup.main()
+
