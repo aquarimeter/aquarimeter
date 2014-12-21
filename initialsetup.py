@@ -3,11 +3,13 @@
 import pygtk
 pygtk.require('2.0')
 import gtk
+import json
+import requests
 
 class Aquarium_Setup:
 
     #checks required fields is filled before registering
-    def validate(self):
+    def validate_fields(self):
         if(not self.valid_Email.get_text() or
            not self.valid_Password.get_text() or
            not self.first_Name.get_text() or
@@ -39,27 +41,61 @@ class Aquarium_Setup:
         info.run()
         info.destroy()
         
+    #pop up message for registeration error code == 422
+    def error_register(self):
+        info = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_CLOSE)
+        info.set_property('title', 'Error in registeration')
+        info.set_property('text', 'Something went wrong. is email valid?')
+        info.run()
+        info.destroy()
+        
     #registers with entered information from gui
-    def register(self,widget,data=None):
-        fill = self.validate()
+    def register(self):
+        #json payload send happens here
+        #storing email and password so no need to get again
+        email = self.valid_Email.get_text()
+        password = self.valid_Password.get_text()
+        register_data = {"user":{"email":email,
+                                 "password":password,
+                                 "first_name":self.first_Name.get_text(),
+                                 "last_name":self.last_Name.get_text()}}
+        
+        reg_data = json.dumps(register_data)
+        url = "some url. need a specific one before sending"
+        reg = requests.post(url, reg_data)
+        
+        if reg.status_code == 200:
+            self.login(email,password)
+        else:
+            self.error_register()
+            
+
+    #login with password and email
+    def login(self,email,password):
+        #login  happens here
+        login_data = {"user":{"email":email,
+                                 "password":password}}
+        
+        log_data = json.dumps(login_data)
+        url = "some url. need a specific one before sending"
+        log = requests.post(url, log_data)
+        
+        if log.status_code == 200:
+            auth_token = log[auth_token]
+            #then run aquarimeter sending auth_token to it
+        else:
+            print "username/password is incorrect"
+            
+
+    def check_register(self,widget):
+        fill = self.validate_fields()
         long_pwd = self.check_length(self.valid_Password.get_text())
         if(not fill):
             self.error_fill()
         elif(not long_pwd):
             self.error_password()
         else:
-            #json payload send should happen here. must be changed to do that
-            print self.valid_Email.get_text()
-            print self.valid_Password.get_text()
-            print self.first_Name.get_text()
-            print self.last_Name.get_text()
-            self.login()
-
-    #login with password and email
-    def login(self):
-        #login  must happen here and must save auth_token. must be changec
-        print "will now login"
-
+            self.register()
     
     #main gui window
     def __init__(self):
@@ -164,7 +200,7 @@ class Aquarium_Setup:
         main_Box.pack_start(hbox10, False,False,0)
         
         button = gtk.Button("Submit and Register")
-        button.connect("clicked", self.register)
+        button.connect("clicked", self.check_register)
         hbox10.pack_end(button,False,False,2)
         
         button = gtk.Button("cancel")
