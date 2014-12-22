@@ -18,10 +18,21 @@ base_dir = '/sys/bus/w1/devices/'
 device_folder = glob.glob(base_dir + '28*')[0]
 device_file = device_folder + '/w1_slave'
 
+auth_token = "whatever auth_token taken intial setup"
 class aquarium(object):
-    
+
+    def send_readings(self, ph, temp):
+        reading_data = {"auth_token":"HR6747C1iUM4XSRqKSsp",
+                        "reading": {"ph":ph,
+                                    "temperature":temp}}
+        send_read = json.dumps(reading_data)
+        url = "url of site"
+        sent_data = requests.post(url, send_read)
+        
+        
+        
     #for reading from DS18B20 temperature connected to GPIO4
-    def read_temp_raw():
+    def read_temp_raw(self):
         f = open(device_file, 'r')
         lines = f.readlines()
         f.close()
@@ -82,7 +93,7 @@ class aquarium(object):
 
     #read temperature
     def read_Temp(self):
-        lines = read_temp_raw()
+        lines = self.read_temp_raw()
         while lines[0].strip()[-3:] != 'YES':
                 time.sleep(0.2)
                 lines = read_temp_raw()
@@ -159,7 +170,7 @@ while True:
 
         #read temp
         temp_f = aqua.read_temp()
-            
+        aqua.send_readings(ph_value, temp_f)
         if temp_f < min_temp:
             heat = True
             #turn h bridge to heat
