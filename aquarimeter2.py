@@ -5,6 +5,8 @@ import glob
 import time
 import RPi.GPIO as GPIO
 import picamera
+import json
+import requests
 GPIO.setmode(GPIO.BCM)
 DEBUG = 1
 
@@ -27,7 +29,7 @@ class aquarium(object):
 
 
     # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)
-    def readadc(adcnum, clockpin, mosipin, misopin, cspin):
+    def readadc(self,adcnum, clockpin, mosipin, misopin, cspin):
             if ((adcnum > 7) or (adcnum < 0)):
                     return -1
             GPIO.output(cspin, True)
@@ -62,24 +64,24 @@ class aquarium(object):
             return adcout
 
     #takes picture
-    def takePic():
+    def takePic(self):
         with picamera.PiCamera() as camera:
             camera.capture('/home/pi/Desktop/image.jpg')
         
     #checks if anyhing is a good distance away to take a picture
-    def moveSens():
+    def moveSens(self):
         pir_pot = readadc(pir_adc, SPICLK, SPIMOSI, SPIMISO, SPICS)
         if pir_pot >150 and pir_pot < 650:
             takePic()
 
     #reads current ph
-    def readPh():
+    def readPh(self):
         ph_pot = readadc(ph_adc, SPICLK, SPIMOSI, SPIMISO, SPICS)
         ph_value = ph_pot*5/1024*3.5
         return ph_value
 
     #read temperature
-    def read_Temp():
+    def read_Temp(self):
         lines = read_temp_raw()
         while lines[0].strip()[-3:] != 'YES':
                 time.sleep(0.2)
@@ -93,21 +95,21 @@ class aquarium(object):
         return temp_f
     
     # turn h bridge to heat
-    def heat_On():
+    def heat_On(self):
         GPIO.output(A1, GPIO.HIGH)
         GPIO.output(A2, GPIO.LOW)
         GPIO.output(A3, GPIO.HIGH)
         GPIO.output(A4, GPIO.LOW)
 
     # turn h bridge to cool
-    def cool_On():
+    def cool_On(self):
         GPIO.output(A1, GPIO.LOW)
         GPIO.output(A2, GPIO.HIGH)
         GPIO.output(A3, GPIO.LOW)
         GPIO.output(A4, GPIO.HIGH)
 
     #turn off any heating and cooling
-    def peltio_Off():
+    def peltio_Off(self):
         GPIO.output(A1, GPIO.LOW)
         GPIO.output(A2, GPIO.LOW)
         GPIO.output(A3, GPIO.LOW)
@@ -140,14 +142,14 @@ GPIO.setup(A4,GPIO.OUT)
 
 
 #set up values
-ph_adc = 0;
+ph_adc = 2;
 pir_adc = 1;
 ideal_temp = 75;
 max_temp = 80;
 min_temp = 70;
 heat = False;
 cool = False;
-
+aqua = aquarium()
 while True:
         # read the analog pin for ph 
         ph_value = aqua.readPh()
