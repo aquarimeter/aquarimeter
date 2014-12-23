@@ -8,6 +8,7 @@ import requests
 import twisted
 import sys
 import os
+import collections
 
 url = "http://aquarimeter.rocks/api/v1/"
 class Aquarium_Setup:
@@ -65,57 +66,70 @@ class Aquarium_Setup:
         info.destroy()
         
     #pop up message for registeration error code == 422
-    def error_register(self):
+    def error_register_422(self):
         info = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_CLOSE)
-        info.set_property('title', 'Error in registeration')
-        info.set_property('text', 'Something went wrong. is email valid?')
+        info.set_property('title', 'Error 422')
+        info.set_property('text', 'Something went wrong with validation')
         info.run()
         info.destroy()
-        
+
+    #pop up message for any other status code except 200 and 422
+    def error_register(self):
+        info = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_CLOSE)
+        info.set_property('title', 'Error with validation')
+        info.set_property('text', 'Site is suffering internel '
+                          'conflict or url is no longer valid')
+        info.run()
+        info.destroy()
+
+    #login is invalid. status code 401
+    def error_login_401(self):
+        info = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_CLOSE)
+        info.set_property('title', 'Error 401')
+        info.set_property('text', 'username/password is incorrect. ')
+        info.run()
+        info.destroy()
+
+    #any other status code covered here
+    def error_login(self):
+        info = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_CLOSE)
+        info.set_property('title', 'Error with login')
+        info.set_property('text', 'Unknown error has occured url might be bad')
+        info.run()
+        info.destroy()
+
+
     #registers with entered information from gui
     def register(self):
         #json payload send happens here
         #storing email and password so no need to get again
         email = self.valid_Email.get_text()
         password = self.valid_Password.get_text()
+        firstnm = self.first_Name.get_text()
+        lastnm = self.last_Name.get_text()
         register_data = {"user":{"email":email,
                                  "password":password,
                                  "first_name":self.first_Name.get_text(),
                                  "last_name":self.last_Name.get_text()}}
+
         
+
+        print register_data
         reg_data = json.dumps(register_data)
-        url_reg = url + "register"
-        reg = requests.post(url_reg, reg_data)
+        url_reg = "http://aquarimeter.rocks:5000/api/v1/register"
+        print reg_data
+        reg = requests.post(url_reg,reg_data)
+        print reg
+        print reg.status_code
         
         if reg.status_code == 200:
             self.login(email,password)
+        elif reg.status_code == 422:
+            self.error_register_422()
         else:
             self.error_register()
             
-
-    #login with password and email
-    def login(self,email,password):
-        #login  happens here
-        login_data = {"user":{"email":email,
-                                 "password":password}}
-        
-        log_data = json.dumps(login_data)
-        url_log = url + "login"
-        log = requests.post(url_log, log_data)
-        
-        if log.status_code == 200:
-            auth_token = log[auth_token]
-            #then run aquarimeter sending auth_token to it along with
-            idealT = self.ideal_spin.get_value()
-            minT = self.min_spin.get_value()
-            maxT = self.max_spin.get_value()
-            comand = "sudo aquarimeter.py" + auth_token + idealT + minT + maxT
-            os.system(comand)
-            
-        else:
-            print "email/password is incorrect"
-            
-
+    #checks fields are filled in on form
     def check_register(self,widget):
         fill = self.validate_fields()
         long_pwd = self.check_length(self.valid_Password.get_text())
@@ -130,6 +144,40 @@ class Aquarium_Setup:
         else:
             self.register()
     
+    #login with password and email
+    def login(self,email,password):
+        #login  happens here
+        login_data = {"user":{"email":email,
+                                 "password":password}}
+        
+        log_data = json.dumps(login_data)
+        url_log = "http://aquarimeter.rocks:5000/api/v1/login"
+        log = requests.post(url_log, data = url_log)
+        
+        if log.status_code == 200:
+            #auth_token, ideal_temp, min_temp and max_temp will be passed
+            #to aquarimete program
+            auth_token = log[auth_token]
+            idealT = self.ideal_spin.get_value()
+            minT = self.min_spin.get_value()
+            maxT = self.max_spin.get_value()
+            comand = "sudo aquarimeter.py" + auth_token + idealT + minT + maxT
+            os.system(comand)
+            self.successful_login()
+            
+        elif log.status_code == 401:
+            self.error_login_401()
+        else:
+            self.error_login()
+
+    #successful login starts aquarimeter and closes initial setup
+    def successful_login(self):
+        info = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_CLOSE)
+        info.set_property('title', 'Error with login')
+        info.set_property('text', 'Unknown error has occured url might be bad')
+        info.run()
+        info.destroy()
+        
     #main gui window
     def __init__(self):
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
@@ -212,7 +260,7 @@ class Aquarium_Setup:
         vbox4.add(self.max_spin)
 
         #temperature units setting
-        vbox5 = gtk.VBox(False,5)
+        vbox5 = gtk.VBox(False,0)
         hbox3.add(vbox5)
 
         combo = gtk.Combo()
@@ -224,6 +272,7 @@ class Aquarium_Setup:
         vbox5.add(label)
         label = gtk.Label(" ")
         vbox5.add(label)
+
         
         temp_frame.add(hbox3)
         main_Box.pack_start(temp_frame, False, False, 0)
