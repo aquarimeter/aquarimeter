@@ -19,7 +19,7 @@ base_dir = '/sys/bus/w1/devices/'
 device_folder = glob.glob(base_dir + '28*')[0]
 device_file = device_folder + '/w1_slave'
 
-url = "http://aquarimeter.rocks:5000/api/v1/"
+url = "http://aquarimeter.rocks/api/v1/"
 
 auth_token = sys.argv[1]
 ideal_T = sys.argv[2]
@@ -54,7 +54,6 @@ class aquarium(object):
         update_get = json.dumps(update_request)
         url_update = url + name_aquarium
         update_recieve = requests.patch(url_update,update_get)
-        
         
     #for reading from DS18B20 temperature connected to GPIO4
     def read_temp_raw(self):
@@ -99,11 +98,10 @@ class aquarium(object):
             adcout >>= 1       # first bit is 'null' so drop it
             return adcout
 
-    #takes picture and sends it
+    #takes picture
     def takePic(self):
         with picamera.PiCamera() as camera:
             camera.capture('/home/pi/Desktop/image.jpg')
-            #http://aquarimeter.rocks:5000
         
     #checks if anyhing is a good distance away to take a picture
     def moveSens(self):
@@ -145,7 +143,7 @@ class aquarium(object):
         GPIO.output(A3, GPIO.LOW)
         GPIO.output(A4, GPIO.HIGH)
 
-    #turn off any heating or cooling
+    #turn off any heating and cooling
     def peltio_Off(self):
         GPIO.output(A1, GPIO.LOW)
         GPIO.output(A2, GPIO.LOW)
