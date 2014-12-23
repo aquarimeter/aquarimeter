@@ -112,15 +112,10 @@ class Aquarium_Setup:
                                  "first_name":self.first_Name.get_text(),
                                  "last_name":self.last_Name.get_text()}}
 
-        
-
-        print register_data
         reg_data = json.dumps(register_data)
         url_reg = "http://aquarimeter.rocks:5000/api/v1/register"
         print reg_data
         reg = requests.post(url_reg,reg_data)
-        print reg
-        print reg.status_code
         
         if reg.status_code == 200:
             self.login(email,password)
