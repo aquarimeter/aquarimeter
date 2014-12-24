@@ -256,8 +256,9 @@ class Aquarium_Setup:
         #temperature units setting
         vbox5 = gtk.VBox(False,0)
         hbox3.add(vbox5)
-        
-        vbox5.pack_start(label)
+
+        label = gtk.Label("Fahrenheit")
+        vbox5.add(label)
         
         temp_frame.add(hbox3)
         main_Box.pack_start(temp_frame, False, False, 0)
