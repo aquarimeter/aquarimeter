@@ -13,6 +13,21 @@ import collections
 url = "http://aquarimeter.rocks/api/v1/"
 class Aquarium_Setup:
 
+    #checks fields are filled in on form
+    def check_register(self,widget):
+        fill = self.validate_fields()
+        long_pwd = self.check_length(self.valid_Password.get_text())
+        temp_valid = self.check_temp()
+
+        if(not fill):
+            self.error_fill()
+        elif(not long_pwd):
+            self.error_password()
+        elif(not temp_valid):
+            self.error_temp_range()
+        else:
+            self.register()
+            
     #checks required fields is filled before registering
     def validate_fields(self):
         if(not self.valid_Email.get_text() or
@@ -64,40 +79,6 @@ class Aquarium_Setup:
                           'Min temperature must be less than or equal to Max temperature')
         info.run()
         info.destroy()
-        
-    #pop up message for registeration error code == 422
-    def error_register_422(self):
-        info = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_CLOSE)
-        info.set_property('title', 'Error 422')
-        info.set_property('text', 'Something went wrong with validation')
-        info.run()
-        info.destroy()
-
-    #pop up message for any other status code except 200 and 422
-    def error_register(self):
-        info = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_CLOSE)
-        info.set_property('title', 'Error with validation')
-        info.set_property('text', 'Site is suffering internel '
-                          'conflict or url is no longer valid')
-        info.run()
-        info.destroy()
-
-    #login is invalid. status code 401
-    def error_login_401(self):
-        info = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_CLOSE)
-        info.set_property('title', 'Error 401')
-        info.set_property('text', 'username/password is incorrect. ')
-        info.run()
-        info.destroy()
-
-    #any other status code covered here
-    def error_login(self):
-        info = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_CLOSE)
-        info.set_property('title', 'Error with login')
-        info.set_property('text', 'Unknown error has occured url might be bad')
-        info.run()
-        info.destroy()
-
 
     #registers with entered information from gui
     def register(self):
@@ -124,21 +105,23 @@ class Aquarium_Setup:
         else:
             self.error_register()
             
-    #checks fields are filled in on form
-    def check_register(self,widget):
-        fill = self.validate_fields()
-        long_pwd = self.check_length(self.valid_Password.get_text())
-        temp_valid = self.check_temp()
+    #pop up message for registeration error code == 422
+    def error_register_422(self):
+        info = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_CLOSE)
+        info.set_property('title', 'Error 422')
+        info.set_property('text', 'Something went wrong with validation')
+        info.run()
+        info.destroy()
 
-        if(not fill):
-            self.error_fill()
-        elif(not long_pwd):
-            self.error_password()
-        elif(not temp_valid):
-            self.error_temp_range()
-        else:
-            self.register()
-    
+    #pop up message for any other status code except 200 and 422
+    def error_register(self):
+        info = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_CLOSE)
+        info.set_property('title', 'Error with validation')
+        info.set_property('text', 'Site is suffering internel '
+                          'conflict or url is no longer valid')
+        info.run()
+        info.destroy()
+
     #login with password and email
     def login(self,email,password):
         #login  happens here
@@ -164,7 +147,7 @@ class Aquarium_Setup:
             self.error_login_401()
         else:
             self.error_login()
-
+            
     #successful login starts aquarimeter and closes initial setup
     def successful_login(self):
         info = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_CLOSE)
@@ -172,7 +155,23 @@ class Aquarium_Setup:
         info.set_property('text', 'Unknown error has occured url might be bad')
         info.run()
         info.destroy()
-        
+            
+    #login is invalid. status code 401
+    def error_login_401(self):
+        info = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_CLOSE)
+        info.set_property('title', 'Error 401')
+        info.set_property('text', 'username/password is incorrect. ')
+        info.run()
+        info.destroy()
+
+    #any other status code covered here
+    def error_login(self):
+        info = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_CLOSE)
+        info.set_property('title', 'Error with login')
+        info.set_property('text', 'Unknown error has occured url might be bad')
+        info.run()
+        info.destroy()
+       
     #main gui window
     def __init__(self):
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
@@ -257,17 +256,8 @@ class Aquarium_Setup:
         #temperature units setting
         vbox5 = gtk.VBox(False,0)
         hbox3.add(vbox5)
-
-        combo = gtk.Combo()
-        combo.entry.set_text("list")
-        slist = [ "F", "C" ]
-        combo.set_popdown_strings(slist)
-        vbox5.add(combo)
-        label = gtk.Label(" ")
-        vbox5.add(label)
-        label = gtk.Label(" ")
-        vbox5.add(label)
-
+        
+        vbox5.pack_start(label)
         
         temp_frame.add(hbox3)
         main_Box.pack_start(temp_frame, False, False, 0)
@@ -284,6 +274,7 @@ class Aquarium_Setup:
         button.connect_object("clicked",gtk.Widget.destroy, self.window)
         hbox10.pack_end(button,False,False,2)
 
+        #show everything in a window
         self.window.show_all()
 
     def main(self):
