@@ -114,7 +114,7 @@ class Aquarium_Setup:
 
         reg_data = json.dumps(register_data)
         url_reg = "http://aquarimeter.rocks:5000/api/v1/register"
-        print reg_data
+        
         reg = requests.post(url_reg,reg_data)
         
         if reg.status_code == 200:
